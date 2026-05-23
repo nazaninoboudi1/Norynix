@@ -1,0 +1,6 @@
+[project]
+name = "norynix"
+version = "0.1.0"
+
+[project.scripts]
+norynix = "norynix.cli:main"
