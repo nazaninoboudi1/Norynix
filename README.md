@@ -37,7 +37,7 @@
 ## 🚀 Installation
 
 ```bash
-git clone git@github.com:nazaninoboudi1/Norynix.git
+git clone https://github.com/nazaninoboudi1/Norynix.git
 cd Norynix
 
 python3 -m venv venv
