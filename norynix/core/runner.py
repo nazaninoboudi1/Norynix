@@ -1,42 +1,54 @@
-# from rich.console import Console
+import asyncio
 
-# console = Console()
-
-# def start_scan(target: str):
-#     console.print("[green][+] Norynix started[/green]")
-#     console.print(f"[cyan]Target:[/cyan] {target}")
-
-
-import dns.resolver
-
+from norynix.modules.dns_enum import enumerate_dns
 from norynix.modules.subdomains import enumerate_subdomains
-
+from norynix.modules.http_probe import probe_many
 
 def start_scan(target):
     print("[+] Norynix started")
     print(f"Target: {target}")
     print()
 
+    dns_results = enumerate_dns(target)
+
     print("[+] DNS Records")
 
-    for record_type in ["A", "AAAA", "MX", "NS"]:
-        try:
-            answers = dns.resolver.resolve(target, record_type)
+    for record_type, records in dns_results.items():
+        print(f"\n[{record_type}]")
 
-            print(f"\n[{record_type}]")
-
-            for answer in answers:
-                print(answer)
-
-        except Exception:
-            pass
+        for record in records:
+            print(record)
 
     print("\n[+] Subdomains")
 
-    subs = enumerate_subdomains(target)
+    subdomains = enumerate_subdomains(target)
 
-    if not subs:
+    if not subdomains:
         print("No subdomains found")
+        return
 
-    for sub in subs:
-        print(f"{sub['host']} -> {sub['ip']}")
+    for subdomain in subdomains:
+        print(
+            f"{subdomain['host']} -> {subdomain['ip']}"
+        )
+
+    print("\n[+] HTTP Probe")
+
+    hosts = [
+        subdomain["host"]
+        for subdomain in subdomains
+    ]
+
+    results = asyncio.run(
+        probe_many(hosts)
+    )
+
+    for host_results in results:
+
+        for result in host_results:
+
+            print(
+                f"{result['url']} "
+                f"[{result['status']}] "
+                f"{result['title']}"
+            )
