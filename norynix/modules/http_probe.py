@@ -1,12 +1,15 @@
+from norynix.config.settings import CONFIG
+
 import asyncio
 import httpx
 import re
 
 
 async def probe_host(client, host):
+
     results = []
 
-    for scheme in ["https", "http"]:
+    for scheme in CONFIG["schemes"]:
 
         url = f"{scheme}://{host}"
 
@@ -14,7 +17,9 @@ async def probe_host(client, host):
 
             response = await client.get(
                 url,
-                follow_redirects=True
+                follow_redirects=CONFIG[
+                    "follow_redirects"
+                ]
             )
 
             title = "N/A"
@@ -48,8 +53,11 @@ async def probe_many(hosts):
     )
 
     async with httpx.AsyncClient(
-        timeout=5,
+
+        timeout=CONFIG["timeout"],
+
         limits=limits
+
     ) as client:
 
         tasks = [
@@ -57,4 +65,6 @@ async def probe_many(hosts):
             for host in hosts
         ]
 
-        return await asyncio.gather(*tasks)
+        return await asyncio.gather(
+            *tasks
+        )
