@@ -1,4 +1,5 @@
 from norynix.config.settings import CONFIG
+from norynix.modules.tech_detect import detect_technologies
 
 import asyncio
 import httpx
@@ -33,10 +34,16 @@ async def probe_host(client, host):
             if match:
                 title = match.group(1).strip()
 
+            technologies = detect_technologies(
+                response.headers,
+                response.text
+            )
+
             results.append({
                 "url": url,
                 "status": response.status_code,
-                "title": title
+                "title": title,
+                "technologies": technologies
             })
 
         except Exception:
@@ -53,11 +60,8 @@ async def probe_many(hosts):
     )
 
     async with httpx.AsyncClient(
-
         timeout=CONFIG["timeout"],
-
         limits=limits
-
     ) as client:
 
         tasks = [

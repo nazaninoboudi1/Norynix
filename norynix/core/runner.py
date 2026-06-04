@@ -8,7 +8,6 @@ from norynix.output.json_writer import save_json
 from rich.console import Console
 from rich.table import Table
 
-
 console = Console()
 
 
@@ -29,6 +28,7 @@ def start_scan(target):
         "http_probe": []
     }
 
+    # ---------------- DNS ----------------
     dns_results = enumerate_dns(target)
 
     console.print(
@@ -49,6 +49,7 @@ def start_scan(target):
         for record in records:
             console.print(record)
 
+    # ---------------- Subdomains ----------------
     console.print(
         "\n[bold green][+] Subdomains[/bold green]"
     )
@@ -63,15 +64,8 @@ def start_scan(target):
 
     sub_table = Table(title="Subdomains")
 
-    sub_table.add_column(
-        "Host",
-        style="cyan"
-    )
-
-    sub_table.add_column(
-        "IP",
-        style="green"
-    )
+    sub_table.add_column("Host", style="cyan")
+    sub_table.add_column("IP", style="green")
 
     for subdomain in subdomains:
 
@@ -80,12 +74,11 @@ def start_scan(target):
             subdomain["ip"]
         )
 
-        scan_data["subdomains"].append(
-            subdomain
-        )
+        scan_data["subdomains"].append(subdomain)
 
     console.print(sub_table)
 
+    # ---------------- HTTP Probe ----------------
     console.print(
         "\n[bold green][+] HTTP Probe[/bold green]"
     )
@@ -101,20 +94,10 @@ def start_scan(target):
 
     table = Table(title="HTTP Probe")
 
-    table.add_column(
-        "URL",
-        style="cyan"
-    )
-
-    table.add_column(
-        "Status",
-        style="yellow"
-    )
-
-    table.add_column(
-        "Title",
-        style="green"
-    )
+    table.add_column("URL", style="cyan")
+    table.add_column("Status", style="yellow")
+    table.add_column("Title", style="green")
+    table.add_column("Technologies", style="magenta")
 
     for host_results in results:
 
@@ -123,15 +106,15 @@ def start_scan(target):
             table.add_row(
                 result["url"],
                 str(result["status"]),
-                result["title"]
+                result["title"],
+                ", ".join(result.get("technologies", []))
             )
 
-            scan_data["http_probe"].append(
-                result
-            )
+            scan_data["http_probe"].append(result)
 
     console.print(table)
 
+    # ---------------- Save Output ----------------
     save_json(
         scan_data,
         "result.json"
