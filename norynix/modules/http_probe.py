@@ -1,5 +1,6 @@
 from norynix.config.settings import CONFIG
 from norynix.modules.tech_detect import detect_technologies
+from norynix.modules.js_recon import extract_js_files
 
 import asyncio
 import httpx
@@ -15,12 +16,9 @@ async def probe_host(client, host):
         url = f"{scheme}://{host}"
 
         try:
-
             response = await client.get(
                 url,
-                follow_redirects=CONFIG[
-                    "follow_redirects"
-                ]
+                follow_redirects=CONFIG.get("follow_redirects", True)
             )
 
             title = "N/A"
@@ -37,17 +35,22 @@ async def probe_host(client, host):
             technologies = detect_technologies(
                 response.headers,
                 response.text
-            )
+            ) or []
+
+            js_files = extract_js_files(response.text) or []
+
+            js_files = [j for j in js_files if j and j.strip()]
 
             results.append({
                 "url": url,
                 "status": response.status_code,
                 "title": title,
-                "technologies": technologies
+                "technologies": technologies,
+                "js_files": js_files
             })
 
         except Exception:
-            pass
+            continue
 
     return results
 
@@ -59,16 +62,13 @@ async def probe_many(hosts):
         max_keepalive_connections=20
     )
 
+    timeout = httpx.Timeout(CONFIG.get("timeout", 5.0))
+
     async with httpx.AsyncClient(
-        timeout=CONFIG["timeout"],
+        timeout=timeout,
         limits=limits
     ) as client:
 
-        tasks = [
-            probe_host(client, host)
-            for host in hosts
-        ]
+        tasks = [probe_host(client, host) for host in hosts]
 
-        return await asyncio.gather(
-            *tasks
-        )
+        return await asyncio.gather(*tasks)
