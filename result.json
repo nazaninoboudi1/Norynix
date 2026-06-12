@@ -31,11 +31,11 @@
                 "ASP.NET"
             ],
             "js_files": [
+                "/js/html5shiv.js",
                 "/js/zarinnegar.js",
                 "/assets/revolution/js/jquery.themepunch.tools.min.js",
-                "https://maps.googleapis.com/maps/api/js?key=AIzaSyDKs3Rtei3x17s1Bn8SKtunmmK3q1guWDM&v=3.31&language=fa&libraries=places,geometry&callback=createMap",
                 "/assets/revolution/js/jquery.themepunch.revolution.min.js",
-                "/js/html5shiv.js"
+                "https://maps.googleapis.com/maps/api/js?key=AIzaSyDKs3Rtei3x17s1Bn8SKtunmmK3q1guWDM&v=3.31&language=fa&libraries=places,geometry&callback=createMap"
             ]
         },
         {
@@ -46,11 +46,11 @@
                 "ASP.NET"
             ],
             "js_files": [
+                "/js/html5shiv.js",
                 "/js/zarinnegar.js",
                 "/assets/revolution/js/jquery.themepunch.tools.min.js",
-                "https://maps.googleapis.com/maps/api/js?key=AIzaSyDKs3Rtei3x17s1Bn8SKtunmmK3q1guWDM&v=3.31&language=fa&libraries=places,geometry&callback=createMap",
                 "/assets/revolution/js/jquery.themepunch.revolution.min.js",
-                "/js/html5shiv.js"
+                "https://maps.googleapis.com/maps/api/js?key=AIzaSyDKs3Rtei3x17s1Bn8SKtunmmK3q1guWDM&v=3.31&language=fa&libraries=places,geometry&callback=createMap"
             ]
         },
         {
